@@ -23,13 +23,15 @@ export default class LambdaProxyIntegrationEvent {
   #request = null
   #stage = null
   #stageVariables = null
+  #isBase64 = false
 
-  constructor(request, stage, path, stageVariables, routeKey = null) {
+  constructor(request, stage, path, stageVariables, routeKey = null, isBase64) {
     this.#path = path
     this.#routeKey = routeKey
     this.#request = request
     this.#stage = stage
     this.#stageVariables = stageVariables
+    this.#isBase64 = isBase64
   }
 
   create() {
@@ -136,7 +138,7 @@ export default class LambdaProxyIntegrationEvent {
       body,
       headers,
       httpMethod,
-      isBase64Encoded: false, // TODO hook up
+      isBase64Encoded: this.#isBase64,
       multiValueHeaders: parseMultiValueHeaders(
         // NOTE FIXME request.raw.req.rawHeaders can only be null for testing (hapi shot inject())
         rawHeaders || [],

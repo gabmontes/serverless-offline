@@ -498,7 +498,9 @@ export default class HttpServer {
       }
 
       // Payload processing
-      const encoding = detectEncoding(request)
+      const { binaryMediaTypes } =
+        this.#serverless.service.provider.apiGateway || {}
+      const encoding = detectEncoding(request, binaryMediaTypes)
 
       request.payload = request.payload && request.payload.toString(encoding)
       request.rawPayload = request.payload
@@ -641,6 +643,7 @@ export default class HttpServer {
                 stage,
                 endpoint.routeKey,
                 stageVariables,
+                encoding === 'base64',
               )
             : new LambdaProxyIntegrationEvent(
                 request,
@@ -648,6 +651,7 @@ export default class HttpServer {
                 requestPath,
                 stageVariables,
                 endpoint.isHttpApi ? endpoint.routeKey : null,
+                encoding === 'base64',
               )
 
         event = lambdaProxyIntegrationEvent.create()

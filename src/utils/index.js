@@ -19,13 +19,22 @@ export { default as generateHapiPath } from './generateHapiPath.js'
 
 // Detect the toString encoding from the request headers content-type
 // enhance if further content types need to be non utf8 encoded.
-export function detectEncoding(request) {
+export function detectEncoding(request, binaryMediaTypes = []) {
   const contentType = request.headers['content-type']
 
-  return typeof contentType === 'string' &&
+  if (
+    typeof contentType === 'string' &&
     contentType.includes('multipart/form-data')
-    ? 'binary'
-    : 'utf8'
+  ) {
+    return 'binary'
+  }
+  if (
+    typeof contentType === 'string' &&
+    binaryMediaTypes.includes(contentType)
+  ) {
+    return 'base64'
+  }
+  return 'utf8'
 }
 
 export function nullIfEmpty(obj) {

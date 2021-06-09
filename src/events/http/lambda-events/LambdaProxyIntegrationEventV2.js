@@ -17,12 +17,14 @@ export default class LambdaProxyIntegrationEventV2 {
   #request = null
   #stage = null
   #stageVariables = null
+  #isBase64 = false
 
-  constructor(request, stage, routeKey, stageVariables) {
+  constructor(request, stage, routeKey, stageVariables, isBase64) {
     this.#routeKey = routeKey
     this.#request = request
     this.#stage = stage
     this.#stageVariables = stageVariables
+    this.#isBase64 = isBase64
   }
 
   create() {
@@ -160,7 +162,7 @@ export default class LambdaProxyIntegrationEventV2 {
       },
       body,
       pathParameters: nullIfEmpty(pathParams),
-      isBase64Encoded: false,
+      isBase64Encoded: this.#isBase64,
       stageVariables: this.#stageVariables,
     }
   }
